@@ -442,11 +442,19 @@ recipe_spec_2 <- recipe_spec_base %>%
     step_rm(optin_time) %>%
     #removes rows with missing value based on the values stored
     #under the column names that starts with lag_
-    step_naomit(starts_with("lag_"))
+    step_naomit(starts_with("optins_trans_lag56_"))
     
 
 recipe_spec_2 %>% prep() %>% juice() %>% glimpse()
 ```
+
+## recipe_spec_fourier
+
+```{r}
+recipe_spec_fourier <- recipe(optins_trans ~ optin_time, data = training(splits)) %>%
+    step_fourier(optin_time, period = c(7, 14, 30, 90), K = 1) 
+```
+
 
 # Modeltime
 
@@ -581,7 +589,8 @@ feature_engineering_artifacts_list <- list(
     recipes = list(
         recipe_spec_base = recipe_spec_base,
         recipe_spec_1    = recipe_spec_1, 
-        recipe_spec_2    = recipe_spec_2
+        recipe_spec_2    = recipe_spec_2,
+        recipe_spec_fourier = recipe_spec_fourier
     ),
     
     # Models / Workflows
